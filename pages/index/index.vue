@@ -1,17 +1,21 @@
 <template>
 	<view class="content">
-    <navbar name="首页" :content="details" @changeDetailsContent="changeDetails">
-      <view>===我是插槽内容===</view>
-    </navbar>
+		<navbar name="首页" :content="details" @changeDetailsContent="changeDetails">
+			<!-- <view>===我是插槽内容===</view> -->
+		</navbar>
 	</view>
 </template>
 
 <script setup>
-  import { ref, reactive, computed } from 'vue'
-  const details = ref('动态数据')
-  const changeDetails = (val) => {
-    details.value = val
-  }
+	import {
+		ref,
+		reactive,
+		computed
+	} from 'vue'
+	const details = ref('动态数据')
+	const changeDetails = (val) => {
+		details.value = val
+	}
 </script>
 
 <style>

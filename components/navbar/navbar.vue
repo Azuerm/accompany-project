@@ -1,30 +1,85 @@
 <template>
-	<view>
-		navbar页面
-    <view>name内容--{{ name }}</view>
-    <view>content内容--{{ content }}</view>
-    <slot></slot>
-    <button @click="handleChangeContent">修改content</button>
+	<view class="nav">
+    <!-- 状态栏 -->
+		<view :style="'height:' + status + 'rpx;' + backStyle"></view>
+    <!-- 标题栏 -->
+    <view class="navbar" :style="'height:' + navHeight + 'rpx;' + backStyle "></view>
 	</view>
 </template>
 
 <script setup>
-	import { defineProps, defineEmits } from 'vue'
-  // defineProps(['name', 'content'])
-  defineProps({
-    name: String,
-    content: {
-      default: () => {
-        return '默认内容'
-      }
+  import { ref, onBeforeMount, defineProps} from 'vue'
+  const props = defineProps({
+    background: {
+      type: String,
+      default: 'rgba(255,255,255,1)'
+    },
+    color: {
+      type: String,
+      default: 'rgba(0,0,0,1)'
+    },
+    fontSize: {
+      type: String,
+      default: 32
+    },
+    iconWidth: {
+      type: String,
+      default: 116
+    },
+    iconHeight: {
+      type: String,
+      default: 38
     }
   })
-  const emit = defineEmits(['changeDetailsContent'])
-  const handleChangeContent = () => {
-    emit('changeDetailsContent', '修改后的内容----')
+  // 在组件挂载前计算好状态栏高度
+  onBeforeMount(() => {
+    // 计算状态栏高度
+    setNavSize()
+    // 设置样式
+    setStyle()
+  })
+  // 状态栏高度
+  const status = ref(0)
+  // 标题栏高度
+  const navHeight = ref(0)
+
+  // 计算状态栏高度
+	const setNavSize = () => {
+    // 获取系统版本和状态栏高度
+    // const res = uni.getSystemInfoSync()
+    // console.log('系统信息',res);
+    const { system, statusBarHeight} = uni.getSystemInfoSync()
+    status.value = statusBarHeight * 2 // 默认返回的是px，乘以2转换成rpx；因为手机屏幕宽度是375rpx，但rpx单位的基准是750rpx，所以需要乘以2
+    const isiOS = system.indexOf('iOS') > -1
+    if (!isiOS) {
+      // 非ios系统，标题栏高度为96rpx
+      navHeight.value = 96
+    } else {
+      // ios系统，标题栏高度为88rpx
+      navHeight.value = 88
+    }
+  }
+
+  // 背景颜色
+  const backStyle = ref('')
+  // 字体颜色
+  const colorStyle = ref('')
+  // 图标样式
+  const iconStyle = ref('')
+  // 样式设置
+  const setStyle = () => {
+    backStyle.value = ['background:' + props.background].join(';')
+    colorStyle.value = ['color:' + props.color].join(';')
+    iconStyle.value = ['height:' + props.iconHeight + 'rpx', 'width:' + props.iconWidth + 'rpx'].join(';')
   }
 </script>
 
 <style>
-
+.nav {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
 </style>
