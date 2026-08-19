@@ -1,43 +1,17 @@
 <template>
 	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view class="text-area">
-			<text class="title">{{title}}</text>
-		</view>
-    <button @click="changeNumber">添加</button>
-    <view>水果总数：{{ totalNumber }}</view>
-    <view v-for="item in list" :key="item.name">
-      <text>{{ item.name }}</text>
-      <text>{{ item.number }}</text>
-    </view>
-    <!-- <mycomponent />全局组件 -->
-    <!-- <myComponent /> 自定义组件 -->
-    <navbar />
+    <navbar name="首页" :content="details" @changeDetailsContent="changeDetails">
+      <view>===我是插槽内容===</view>
+    </navbar>
 	</view>
 </template>
 
 <script setup>
-	// import myComponent from '../../myComponents/component.vue'
   import { ref, reactive, computed } from 'vue'
-  import { onLoad} from '@dcloudio/uni-app'
-  const title = ref('Hello')
-  const list = reactive([
-    { name: '苹果', number: 1},
-    { name: '香蕉', number: 2},
-    { name: '橙子', number: 3},
-    { name: '葡萄', number: 4},
-  ])
-  const changeNumber = () => {
-    list.forEach(item => {
-      item.number++;
-    })
+  const details = ref('动态数据')
+  const changeDetails = (val) => {
+    details.value = val
   }
-  const totalNumber = computed(() => {
-    return list.reduce((total, cur) => total + cur.number, 0)
-  })
-  onLoad(() => {
-    console.log('页面级生命周期onLoad，title.value', title.value);
-  })
 </script>
 
 <style>
