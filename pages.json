@@ -5,13 +5,51 @@
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
+		},
+		{
+			"path": "pages/order/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#ffffff"
+			}
+		},
+		{
+			"path": "pages/user/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#ffffff"
+			}
 		}
 	],
+	"tabBar": {
+		"color": "#535353",
+		"selectedColor": "#0bb584",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/resource/tab_index2.png",
+				"selectedIconPath": "static/resource/tab_index1.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/order/index",
+				"iconPath": "static/resource/tab_order2.png",
+				"selectedIconPath": "static/resource/tab_order1.png",
+				"text": "订单"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"iconPath": "static/resource/tab_user1.png",
+				"selectedIconPath": "static/resource/tab_user2.png",
+				"text": "用户"
+			}
+		]
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
-	},
-	"uniIdRouter": {}
+	}
 }
