@@ -10,23 +10,14 @@
       <text>{{ item.name }}</text>
       <text>{{ item.number }}</text>
     </view>
+    <!-- <mycomponent />全局组件 -->
+    <!-- <myComponent /> 自定义组件 -->
+    <navbar />
 	</view>
 </template>
 
 <script setup>
-	// export default {
-	// 	data() {
-	// 		return {
-	// 			title: 'Hello'
-	// 		}
-	// 	},
-	// 	onLoad() {
-
-	// 	},
-	// 	methods: {
-
-	// 	}
-	// }
+	// import myComponent from '../../myComponents/component.vue'
   import { ref, reactive, computed } from 'vue'
   import { onLoad} from '@dcloudio/uni-app'
   const title = ref('Hello')

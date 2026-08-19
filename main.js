@@ -1,4 +1,5 @@
 import App from './App'
+// import Component from './myComponents/component.vue'
 
 // #ifndef VUE3
 import Vue from 'vue'
@@ -17,6 +18,7 @@ import {
 } from 'vue'
 export function createApp() {
 	const app = createSSRApp(App)
+  // app.component('mycomponent', Component) // 注册全局组件
 	return {
 		app
 	}
