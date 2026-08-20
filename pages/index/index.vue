@@ -1,8 +1,7 @@
 <template>
 	<view class="content">
-		<navbar name="首页" :content="details" @changeDetailsContent="changeDetails">
-			<!-- <view>===我是插槽内容===</view> -->
-		</navbar>
+    <navbar titleText="首页"/>
+		<button style="margin-top: 130rpx;" @click="navigateTo">跳转</button>
 	</view>
 </template>
 
@@ -12,10 +11,11 @@
 		reactive,
 		computed
 	} from 'vue'
-	const details = ref('动态数据')
-	const changeDetails = (val) => {
-		details.value = val
-	}
+	const navigateTo = () => {
+    uni.navigateTo({
+      url: '/pages/search/index'
+    })
+  }
 </script>
 
 <style>
