@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-    <navbar titleText="首页"/>
+    <navbar :isHome="true" />
 		<button style="margin-top: 130rpx;" @click="navigateTo">跳转</button>
 	</view>
 </template>
