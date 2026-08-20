@@ -1,7 +1,20 @@
 <template>
-	<view class="content">
-    <navbar :isHome="true" />
-		<button style="margin-top: 130rpx;" @click="navigateTo">跳转</button>
+	<view>
+		<navbar :isHome="true" />
+		<view style="margin-top: 130rpx; ">
+			<view class="weui-cell" style="background: #fff9eb; ">
+				<view class="weui-cell_hd">
+					<image src="/static/resource/program.png"
+						style="display: block;width: 40rpx;height:40rpx; margin-right: 14rpx; margin-left: 14rpx;" />
+				</view>
+				<view class="weui-cell_bd">
+					<text style="color: #be9719; font-size: 26rpx;">点击右上"添加到我的小程序"，方便下次找到</text>
+				</view>
+				<view class="weui-cell_fd">
+					<image src="/static/resource/cancel.png" style="display: block;width: 25rpx;height:25rpx; margin-right: 14rpx; margin-left: 14rpx;" />
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -12,36 +25,17 @@
 		computed
 	} from 'vue'
 	const navigateTo = () => {
-    uni.navigateTo({
-      url: '/pages/search/index'
-    })
-  }
+		uni.navigateTo({
+			url: '/pages/search/index'
+		})
+	}
 </script>
 
 <style>
-	.content {
+	.weui-cell {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
+    justify-content: center;
+    height: 80rpx;
 	}
 </style>
