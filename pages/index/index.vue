@@ -24,11 +24,16 @@
 		reactive,
 		computed
 	} from 'vue'
+  import { onLoad } from '@dcloudio/uni-app' // 页面加载时调用的函数
 	const navigateTo = () => {
 		uni.navigateTo({
 			url: '/pages/search/index'
 		})
 	}
+  const app = getApp() // 获取全局变量
+  onLoad(() => {
+    app.globalData.utils.getUserInfo()
+  })
 </script>
 
 <style>
