@@ -26,8 +26,15 @@
 			"path": "pages/search/index",
 			"style": {
 				"navigationBarTitleText": "",
-        "navigationStyle": "custom"
-        // 添加自定义navbar
+				"navigationStyle": "custom"
+				// 添加自定义navbar
+			}
+		},
+		{
+			"path": "pages/hospital/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
 			}
 		}
 	],

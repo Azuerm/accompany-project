@@ -37,6 +37,18 @@
         </block>
       </swiper>
     </view>
+    <!-- 快捷入口2 -->
+    <view v-if="nav2sList && nav2sList.length > 0" class="nav2-list">
+      <block v-for="(item, index) in nav2sList" :key="index">
+        <!-- <view class="nav2-item" :data-index="index" @click="onNav2Tap"> data-属性写法 -->
+        <view class="nav2-item" :data-index="index" @click="onNav2Tap(index)">
+          <image
+            :src="item.pic_image_url"
+            mode="widthFix"
+          />
+        </view>
+      </block>
+    </view>
 	</view>
 </template>
 
@@ -44,7 +56,8 @@
 	import {
 		ref,
 		reactive,
-		computed
+		computed,
+    toRaw
 	} from 'vue'
   import { onLoad } from '@dcloudio/uni-app' // 页面加载时调用的函数
 	const navigateTo = () => {
@@ -55,6 +68,8 @@
   const app = getApp() // 获取全局变量
   // 轮播图数据
   const slidesList = ref([])
+  // 快捷入口
+  const nav2sList = ref([])
   onLoad(() => {
     // 获取用户信息
     app.globalData.utils.getUserInfo()
@@ -72,11 +87,37 @@
           success: ({data}) => {
             console.log('轮播图数据', data)
             slidesList.value = data.slides
+            nav2sList.value = data.nav2s
           }
         })
       }
     })
   })
+  // 快捷入口2点击跳转页面
+  // 1 方法1 ： 通过data-index属性获取点击的项
+  // const onNav2Tap = (e) => {
+  //   // e 是事件对象
+  //   console.log('e',e)
+  //   // toRaw 将响应式对象转换为普通对象，因为只需要知道当前点击的项，不需要响应式
+  //   console.log(toRaw(nav2sList.value))
+  //   // 通过自定义属性index 获取当前点击的项
+  //   const nav = toRaw(nav2sList.value)[e.currentTarget.dataset.index] //相当于 nav2sList.value[索引]
+  //   console.log('nav', nav)
+  //   if(nav.stype == 1) {
+  //     uni.navigateTo({
+  //       url: nav.stype_link
+  //     })
+  //   }
+  // }
+  // 2 方法2: 通过索引获取点击的项
+  const onNav2Tap = (index) => {
+    const nav = nav2sList.value[index]
+    if (nav.stype == 1) {
+      uni.navigateTo({
+        url: nav.stype_link
+      })
+    }
+  }
 </script>
 
 <style>
@@ -100,6 +141,21 @@
     border-radius: 10rpx;
   }
   .index-swiper swiper-item image{
+    width: 100%;
+    height: 100%;
+  }
+  .nav2-list {
+    margin: 20rpx 20rpx 0 20rpx;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10rpx;
+    overflow: hidden;
+  }
+  .nav2-list .nav2-item {
+    border-radius: 10rpx;
+    overflow: hidden;
+  }
+  .nav2-list .nav2-item image{
     width: 100%;
     height: 100%;
   }
