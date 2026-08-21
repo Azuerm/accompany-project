@@ -1,6 +1,12 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/hospital/index",
+			"style": {
+				"navigationBarTitleText": "填写订单服务"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "uni-app",
@@ -30,18 +36,16 @@
 				// 添加自定义navbar
 			}
 		},
-		{
-			"path": "pages/hospital/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
-			}
-		},
+		// {
+		// 	"path": "pages/hospital/index",
+		// 	"style": {
+		// 		"navigationBarTitleText": "填写订单服务"
+		// 	}
+		// },
 		{
 			"path": "pages/service/index",
 			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": ""
 			}
 		}
 	],
