@@ -9,7 +9,7 @@ class Utils {
     // 调用登录api
     uni.login({
       success: (res) => {
-        // console.log('登录结果', res)
+        console.log('登录结果', res)
         this.request({
           url: '/auth/wxLogin',
           data: {
@@ -19,6 +19,9 @@ class Utils {
             console.log('登录成功', res)
           }
         })
+      },
+      fail: (err) => {
+        console.log('登录失败', err)
       }
     })
   }

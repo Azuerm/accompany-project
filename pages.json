@@ -36,13 +36,14 @@
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
 			}
-    },
-    {
-      "path": "pages/service/index",
-      "style": {
-        "navigationBarTitleText": ""
-      }
-    }
+		},
+		{
+			"path": "pages/service/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+			}
+		}
 	],
 	"tabBar": {
 		"color": "#535353",
