@@ -41,11 +41,24 @@
     <view v-if="nav2sList && nav2sList.length > 0" class="nav2-list">
       <block v-for="(item, index) in nav2sList" :key="index">
         <!-- <view class="nav2-item" :data-index="index" @click="onNav2Tap"> data-属性写法 -->
-        <view class="nav2-item" :data-index="index" @click="onNav2Tap(index)">
+        <view class="nav2-item"  @click="onNav2Tap(index)">
           <image
             :src="item.pic_image_url"
             mode="widthFix"
           />
+        </view>
+      </block>
+    </view>
+    <!-- 快捷入口多个 -->
+    <view v-if="navList && navList.length > 0" class="nav-list">
+      <block v-for="(item, index) in navList" :key="item.id">
+        <view class="nav-item">
+          <view class="nav-pic" @click="onNavTap(index)">
+            <image
+              :src="item.pic_image_url"
+            />
+          </view>
+          <view class="nav-text" :style="'color:' + (item.tcolor ? item.tcolor : '')">{{ item.title }}</view>
         </view>
       </block>
     </view>
@@ -68,8 +81,10 @@
   const app = getApp() // 获取全局变量
   // 轮播图数据
   const slidesList = ref([])
-  // 快捷入口
+  // 快捷入口2
   const nav2sList = ref([])
+  // 快捷入口多个
+  const navList = ref([])
   onLoad(() => {
     // 获取用户信息
     app.globalData.utils.getUserInfo()
@@ -88,6 +103,7 @@
             console.log('轮播图数据', data)
             slidesList.value = data.slides
             nav2sList.value = data.nav2s
+            navList.value = data.navs
           }
         })
       }
@@ -112,11 +128,20 @@
   // 2 方法2: 通过索引获取点击的项
   const onNav2Tap = (index) => {
     const nav = nav2sList.value[index]
+    jumpPage(nav)
+  }
+  // 封装跳转路由逻辑：
+  const jumpPage = (nav) => {
     if (nav.stype == 1) {
       uni.navigateTo({
         url: nav.stype_link
       })
     }
+  }
+  // 快捷入口多个点击跳转页面
+  const onNavTap = (index) => {
+    const nav = navList.value[index]
+    jumpPage(nav)
   }
 </script>
 
@@ -158,5 +183,21 @@
   .nav2-list .nav2-item image{
     width: 100%;
     height: 100%;
+  }
+  .nav-list {
+    margin: 20rpx 20rpx 0 20rpx;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 10rpx;
+  }
+  .nav-list .nav-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .nav-list .nav-pic image {
+    width: 110rpx;
+    height: 110rpx;
   }
 </style>
