@@ -69,8 +69,8 @@
 					</view>
 					<view class="form-item-select" @click="onClinetChange">
 						<view class="picker-input">
-							<text class="placeholder">
-								请选择就诊人
+							<text :class="clientsList.name != '' ? 'selected': 'placeholder'">
+								{{ clientsList.name ? clientsList.name : '请选择就诊人' }}
 							</text>
 							<image src="@/static/resource/service_right.png" />
 						</view>
@@ -148,6 +148,15 @@
 			url: '/pages/clients/index?act=select'
 		})
 	}
+  // 就诊人信息列表
+  const clientsList = ref({
+    name: ''
+  });
+  // 通过自定义事件获取就诊人信息
+  uni.$on('clientChange', (data) => {
+    console.log('获取到就诊人信息', data)
+    clientsList.value.name = data.name
+  }) 
 </script>
 
 <style lang="scss" scoped>

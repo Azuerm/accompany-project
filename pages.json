@@ -41,13 +41,13 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-    },
-    {
-      "path": "pages/clients/index",
-      "style": {
-        "navigationBarTitleText": ""
-      }
-    }
+		},
+		{
+			"path": "pages/clients/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		}
 	],
 	"tabBar": {
 		"color": "#535353",
