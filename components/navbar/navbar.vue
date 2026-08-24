@@ -19,7 +19,7 @@
          <!-- margin-top: 胶囊按钮的top值 * 2 - 状态栏高度；因为胶囊按钮的top值包括状态栏的高度，所以要减去状态栏的高度 -->
         <navigator
           url="/pages/search/index"
-          :style="'height:'+ (menu.height*2) +'rpx;line-height:'+ (menu.height*2) +'rpx;margin-top:'+(menu.top*2 - status) + 'rpx; margin-right:' + (menu.width*2 + 24) + 'rpx;background: #f4f4f4;border-radius:200rpx; text-align:center'"
+          :style="'height:'+ (menu.height*2) +'rpx;line-height:'+ (menu.height*2) +'rpx; margin-top:'+(menu.top * rpxRatio - status) + 'rpx; margin-right:' + (menu.width * rpxRatio + 24) + 'rpx;background: #f4f4f4;border-radius:200rpx; text-align:center'"
         >
           <view class="search-text">
             <image
@@ -48,7 +48,8 @@
 		ref,
     reactive,
 		onBeforeMount,
-		defineProps
+		defineProps,
+    defineEmits
 	} from 'vue'
 	const props = defineProps({
 		background: {
@@ -86,7 +87,17 @@
 		setNavSize()
 		// 设置样式
 		setStyle()
+    totalHight.value = status.value + navHeight.value
+    emit('heightChange', totalHight.value)
 	})
+
+  const emit = defineEmits(['heightChange'])
+   // navbar总高度
+  const totalHight = ref(0)
+  // 搜索功能距离顶部距离
+  const windowWidthGet = ref(0)
+  const rpxRatio = ref(0)
+
 	// 状态栏高度
 	const status = ref(0)
 	// 标题栏高度
@@ -110,9 +121,14 @@
 		// console.log('系统信息',res);
 		const {
 			system,
-			statusBarHeight
+			statusBarHeight,
+      windowWidth
 		} = uni.getSystemInfoSync()
 		status.value = statusBarHeight * 2 // 默认返回的是px，乘以2转换成rpx；因为手机屏幕宽度是375rpx，但rpx单位的基准是750rpx，所以需要乘以2
+
+    windowWidthGet.value = windowWidth
+    rpxRatio.value = 750 / windowWidthGet.value
+
 		const isiOS = system.indexOf('iOS') > -1
 		if (!isiOS) {
 			// 非ios系统，标题栏高度为96rpx
@@ -139,6 +155,8 @@
 			})
 		}
 	}
+ 
+  
 </script>
 
 <style>

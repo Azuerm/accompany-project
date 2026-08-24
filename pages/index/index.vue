@@ -1,8 +1,8 @@
 <template>
 	<view>
-		<navbar :isHome="true" />
+		<navbar :isHome="true" @heightChange="onNavHeightChange"/>
 		<!-- 添加到我的小程序 -->
-		<view>
+		<view class="container" :style="{ paddingTop: navHeight + 'rpx'}">
 			<view class="weui-cell" style="background: #fff9eb; ">
 				<view class="weui-cell_hd">
 					<image src="/static/resource/program.png"
@@ -99,6 +99,11 @@
 	const navList = ref([])
 	// 医院列表
 	const hospitalList = ref([])
+
+  const navHeight = ref(0)
+  const onNavHeightChange = (height) => {
+    navHeight.value = height
+  }
 	onLoad(() => {
 		// 获取用户信息
 		app.globalData.utils.getUserInfo()
