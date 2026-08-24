@@ -21,6 +21,7 @@
 				</view>
 			</view>
 		</view>
+    <!-- 服务详情 -->
 		<view class="content-wrapper">
 			<view class="pub-box">
 				<view class="put-box-content">
@@ -76,8 +77,33 @@
 						</view>
 					</view>
 				</view>
+        <view class="form-item border-bottom">
+					<view class="form-item-label">
+						接送地址
+					</view>
+					<view class="form-item-select">
+						<input class="uni-input" placeholder="请填写就诊人所在地址" placeholder-style="color:#999"/>
+					</view>
+				</view>
+        <view class="form-item ">
+					<view class="form-item-label">
+						联系电话
+					</view>
+					<view class="form-item-select">
+						<input class="uni-input" placeholder="请填写您的联系电话" placeholder-style="color:#999" type="tel"/>
+					</view>
+				</view>
 			</view>
 		</view>
+    <!-- 服务需求 -->
+    <view class="content-description">
+      <view class="descrip-title">
+        服务需求
+      </view>
+      <view class="descrip-text ">
+        <textarea auto-height placeholder="请简单描述您要就诊的科室" placeholder-style="color:#999" value=""/>
+      </view>
+    </view>
 	</view>
 </template>
 
@@ -325,4 +351,20 @@
 		padding: 0 20rpx;
 		text-align: center;
 	}
+  .content-description {
+    margin: 40rpx 20rpx 0 20rpx;
+  }
+  .descrip-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    margin-bottom: 20rpx;
+  }
+  .descrip-text textarea {
+    background-color: #fff;
+    padding: 20rpx;
+    border-radius: 20rpx;
+    overflow: hidden;
+    width: calc(100% - 40rpx);
+    min-height: 200rpx;
+  }
 </style>
