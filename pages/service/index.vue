@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view style="background-color: #EEF1EE; min-height: 100vh;">
     <view class="od-banner" :style="{ backgroundImage: `url(${bannerBg})` }">
       <!-- 进度条 -->
       <view class="od-progress">
@@ -21,17 +21,41 @@
         </view>
       </view>
     </view>
-    <view class="pub-box">
-      <view class="put-box-content">
-        <view class="put-title">
-          <image
-            :src="serviceList.icon_image ? serviceList.icon_image_url : defaultAvatar"
-            class="put-icon"
-          />
-          <text class="put-type">{{ serviceList.name }}</text>
+    <view class="content-wrapper">
+      <view class="pub-box">
+        <view class="put-box-content">
+          <view class="put-title">
+            <image
+              :src="serviceList.icon_image ? serviceList.icon_image_url : defaultAvatar"
+              class="put-icon"
+            />
+            <text class="put-type">{{ serviceList.name }}</text>
+          </view>
+          <view class="put-text">
+            <view class="put-text-gray">服务内容</view>
+          </view>
         </view>
-        <view class="put-text">
-          <view class="put-text-gray">服务内容</view>
+      </view>
+      <view class="form-box" v-if="serviceList.stype == 10 || serviceList.stype == 15 || serviceList.stype == 20 ">
+        <view class="form-item">
+          <view class="form-item-label">
+            就诊医院
+          </view>
+          <view class="form-item-select">
+            <picker @change="onHospitalChange" :value="hospitalIndex" :range="hospitalList" range-key="name" >
+              <!-- range-key作用：设置想要显示的字段 -->
+              <!-- <view class="uni-input">{{hospitalList[hospitalIndex].name}}</view> -->
+              <!-- <input type="text" :disabled="true" placeholder="请选择要就诊的医院" :value="hospitalList[hospitalIndex].name"> -->
+              <view class="picker-input">
+                <text :class="hospitalIndex >= 0 ? 'selected': 'placeholder'">
+                  {{ hospitalIndex >= 0 ? hospitalList[hospitalIndex].name : '请选择要就诊的医院'}}
+                </text>
+                <image
+                  src="@/static/resource/service_right.png"
+                />
+              </view>
+            </picker>
+          </view>
         </view>
       </view>
     </view>
@@ -51,7 +75,23 @@ onLoad((options) => {
   console.log('上级页面传递过来的参数：',options);
   getHospitalData(options)
 })
+// 服务数据列表
 const serviceList = ref({})
+// 医院列表
+const hospitalList = ref([])
+// 选中医院索引
+const hospitalIndex = ref(0)
+// 订单数据
+const order = ref({
+  price: '',
+  starttime: '',
+  address: {
+    userName: '',
+    cityName: '',
+    countyName: '',
+    detailInfo: ''
+  }
+})
 const app = getApp()
 // 页面服务数据
 const getHospitalData = (options) => {
@@ -63,8 +103,19 @@ const getHospitalData = (options) => {
     success: (res) => {
       serviceList.value = res.data.service
       console.log('服务数据',serviceList.value)
+      hospitalList.value = res.data.hospitals
+      if (options.hid) {
+        hospitalIndex.value = res.data.hospitals.findIndex(item => item.id == options.hid)
+        order.value.pirice = res.data.hospitals.findIndex(item => item.id == options.hid).service_price
+      }
     }
   })
+}
+// 切换医院
+const onHospitalChange = (e) => {
+  hospitalIndex.value = e.detail.value
+  order.value.price = hospitalList.value[hospitalIndex.value].service_price
+  console.log('切换医院价格',order.value.price)
 }
 </script>
 
@@ -115,19 +166,20 @@ const getHospitalData = (options) => {
   // color: #fff;
   // font-weight: bold;
 }
+.content-wrapper {
+  position: relative;
+  margin-top: -60rpx;
+}
+// 类型
 .pub-box {
-  position: absolute;
   width: calc(100% - 40rpx);
-  top: 200rpx;
-  left: 0;
-  background-color: pink;
   margin: 20rpx 20rpx 0 20rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
 }
 .put-box-content {
   background-color: #fff;
   width: calc(100% - 40rpx);
-  border-radius: 20rpx;
-  overflow: hidden;
   display: flex;
   justify-content: space-between;
   height: 90rpx;
@@ -167,5 +219,44 @@ const getHospitalData = (options) => {
   background-position: center;
   margin-right: 10rpx;
   vertical-align: middle;
+}
+// 服务内容
+.form-box {
+  width: calc(100% - 40rpx);
+  margin: 20rpx 20rpx 0 20rpx;
+  background-color: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+.form-box .form-item {
+  background-color: #fff;
+  width: calc(100% - 40rpx);
+  display: flex;
+  justify-content: space-between;
+  height: 90rpx;
+  padding: 0 20rpx;
+}
+.picker-input image {
+  width: 36rpx;
+  height: 36rpx;
+  vertical-align: middle;
+}
+.form-item .form-item-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.form-item .form-item-select {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.form-item .form-item-select input {
+  text-align: right;
+}
+.placeholder {
+  color: #999;
 }
 </style>
