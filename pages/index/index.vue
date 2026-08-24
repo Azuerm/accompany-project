@@ -171,7 +171,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss" scoped>
 	/* page标签是页面的根元素，page相当于html的body标签 */
 	page {
 		background: #fff;
