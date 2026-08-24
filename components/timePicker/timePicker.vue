@@ -175,7 +175,7 @@ const getWeekDay = (dayIndex) => {
   vertical-align: middle;
 }
 .placeholder {
-  color: #ccc;
+  color: #999;
 }
 
 </style>

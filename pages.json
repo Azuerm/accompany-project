@@ -41,6 +41,12 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
+    },
+    {
+      "path": "pages/clients/index",
+      "style": {
+        "navigationBarTitleText": ""
+      }
     }
 	],
 	"tabBar": {
