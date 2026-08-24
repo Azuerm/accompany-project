@@ -57,6 +57,14 @@
             </picker>
           </view>
         </view>
+        <view class="form-item">
+          <view class="form-item-label">
+            就诊时间
+          </view>
+          <view class="form-item-select">
+            <timePicker></timePicker>
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -67,6 +75,7 @@ import bannerBg from '@/static/resource/banner-bg.jpg'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import defaultAvatar from '@/static/resource/avatar.png'
+import TimePicker from '../../components/timePicker/timePicker.vue'
 // 当前进度百分比
 const currentPercent = ref(12.8)
 // 当前进度文字

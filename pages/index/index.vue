@@ -2,7 +2,7 @@
 	<view>
 		<navbar :isHome="true" />
 		<!-- 添加到我的小程序 -->
-		<view style="margin-top: 130rpx; ">
+		<view>
 			<view class="weui-cell" style="background: #fff9eb; ">
 				<view class="weui-cell_hd">
 					<image src="/static/resource/program.png"

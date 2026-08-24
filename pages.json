@@ -41,7 +41,7 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		}
+    }
 	],
 	"tabBar": {
 		"color": "#535353",
