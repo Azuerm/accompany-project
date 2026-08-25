@@ -35,6 +35,7 @@
 					</view>
 				</view>
 			</view>
+      <!-- 服务详情 1  -->
 			<view class="form-box"
 				v-if="serviceList.stype == 10 || serviceList.stype == 15 || serviceList.stype == 20 ">
 				<view class="form-item border-bottom">
@@ -104,11 +105,42 @@
         <textarea auto-height placeholder="请简单描述您要就诊的科室" placeholder-style="color:#999" value=""/>
       </view>
     </view>
+    <!-- 占位符 -->
+    <view style="height: 300rpx;"></view>
+    <!-- 悬浮提交按钮 -->
+    <view class="vp-foot">
+      <view class="xieyi">
+        <view class="checkbox" @click="onXieyiChange">
+          <image
+            :src="is_xieyi ? SelectIcon : noSelectIcon"
+          />
+        </view>
+        <view class="xieyi-text" >
+          <text>我已阅读并同意</text>
+          <navigator
+            :url="cfg.page_xy"
+            style="color: #0bb584"
+          >
+            《用户协议》
+          </navigator>
+          <text>和</text>
+          <navigator :url="cfg.page_fw" style="color: #0bb584">《服务协议》</navigator>
+        </view>
+      </view>
+      <view class="xieyi-bt">
+        <button form-type="submit">
+          确定下单
+          <block v-if="order.price > 0"> (支付{{ order.price }}元)</block>
+        </button>
+      </view>
+    </view>
 	</view>
 </template>
 
-<script setup>
+<script setup>noSelectIcon
 	import bannerBg from '@/static/resource/banner-bg.jpg'
+  import noSelectIcon  from '@/static/resource/no_select.png'
+  import SelectIcon from '@/static/resource/select.png'
 	import {
 		ref
 	} from 'vue'
@@ -142,6 +174,13 @@
 			detailInfo: ''
 		}
 	})
+  // 是否勾选协议
+  const is_xieyi = ref(false)
+  // 协议跳转路径
+  const cfg = ref({
+    page_xy: '',
+    page_fw: ''
+  })
 	const app = getApp()
 	// 页面服务数据
 	const getHospitalData = (options) => {
@@ -156,8 +195,9 @@
 				hospitalList.value = res.data.hospitals
 				if (options.hid) {
 					hospitalIndex.value = res.data.hospitals.findIndex(item => item.id == options.hid)
-					order.value.pirice = res.data.hospitals.findIndex(item => item.id == options.hid)
-						.service_price
+          console.log('医院数据');
+					// order.value.price = res.data.hospitals[hospitalIndex.value].service_price
+          order.value.price = res.data.hospitals.find(item => item.id == options.hid).service_price
 				}
 			}
 		})
@@ -183,6 +223,10 @@
     console.log('获取到就诊人信息', data)
     clientsList.value.name = data.name
   }) 
+  // 是否同意协议
+  const onXieyiChange = () => {
+
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -366,5 +410,50 @@
     overflow: hidden;
     width: calc(100% - 40rpx);
     min-height: 200rpx;
+  }
+  // 悬浮提交按钮
+  .vp-foot {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .vp-foot .xieyi {
+    height: 100rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .xieyi .checkbox {
+    margin-right: 10rpx;
+  }
+  .xieyi .checkbox image {
+    width: 40rpx;
+    height: 40rpx;
+    vertical-align: middle;
+  }
+  .xieyi .xieyi-text {
+    display: flex;
+  }
+  // 按钮
+  .vp-foot .xieyi-bt {
+    height: 120rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    background-color: #EEF1EE;
+    color: #999;
+    font-size: 32rpx;
+  }
+  .xieyi-bt button {
+    width: 100%;
+    height: 100%;
+    background-color: #EEF1EE;
+    line-height: 120rpx;
+    color: #999;
   }
 </style>

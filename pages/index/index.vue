@@ -157,9 +157,10 @@
 	// 封装跳转路由逻辑：
 	const jumpPage = (nav) => {
 		if (nav.stype == 1) {
+      console.log('跳转服务页面',nav.stype_link)
 			uni.navigateTo({
 				url: nav.stype_link
-        // /pages/index/hospital?hid=x
+        
 			})
 		}
 	}
