@@ -12,7 +12,7 @@
       <view class="picker-display">
         <!-- 显示选中的时间，或者默认占位符 -->
         <text :class="{ 'placeholder': !selectedTimeStr }">
-          {{ selectedTimeStr || textType == 'consult_time' ? '请选择就诊时间' : '请选择期待服务时间' }}
+          {{ selectedTimeStr || (textType == 'consult_time' ? '请选择就诊时间' : '请选择期待服务时间') }}
         </text>
         <image
           src="@/static/resource/service_right.png"
@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted, defineProps, defineEmits } from 'vue';
 const { textType } = defineProps({
   textType: {
     type: String
@@ -45,7 +45,8 @@ const config = {
 onMounted(() => {
   initPickerData();
 });
-
+// 返回时间戳格式给服务页面
+const emit = defineEmits(['timestampChange']);
 // --- 初始化数据 ---
 const initPickerData = () => {
   const dateList = [];
@@ -153,9 +154,16 @@ const bindMultiPickerChange = (e) => {
   const timeStr = multiArray.value[1][val[1]].label;
   
   // 组合最终结果：8月24日(今天) 15:18
-  selectedTimeStr.value = `${dateObj.label} ${timeStr}`;
+  selectedTimeStr.value = `${dateObj.label} ${timeStr}`;selectedTimeStr
   
   console.log('最终选中时间:', selectedTimeStr.value);
+
+  // 组合完整日期功能 -》 时间戳
+  const [hours, minutes] = timeStr.split(':')
+  const fullDate = new Date(dateObj.fullDate)
+  fullDate.setHours(hours, minutes, 0, 0)
+  const timestamp = fullDate.getTime()
+  emit('timestampChange', timestamp)
 };
 
 // 辅助函数：获取星期几

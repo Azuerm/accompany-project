@@ -33,13 +33,13 @@
 		{
 			"path": "pages/hospital/index",
 			"style": {
-				"navigationBarTitleText": "填写订单服务"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
 			"path": "pages/service/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "填写订单服务"
 			}
 		},
 		{

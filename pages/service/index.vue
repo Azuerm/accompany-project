@@ -21,7 +21,7 @@
 				</view>
 			</view>
 		</view>
-    <!-- 服务详情 -->
+		<!-- 服务详情 -->
 		<view class="content-wrapper">
 			<view class="pub-box">
 				<view class="put-box-content">
@@ -35,7 +35,7 @@
 					</view>
 				</view>
 			</view>
-      <!-- 服务详情 1  -->
+			<!-- 服务详情 1  -->
 			<view class="form-box"
 				v-if="serviceList.stype == 10 || serviceList.stype == 15 || serviceList.stype == 20 ">
 				<view class="form-item border-bottom">
@@ -62,7 +62,7 @@
 						就诊时间
 					</view>
 					<view class="form-item-select">
-						<timePicker textType="consult_time"></timePicker>
+						<timePicker textType="consult_time" @timestampChange="onTimeChange"></timePicker>
 					</view>
 				</view>
 				<view class="form-item border-bottom">
@@ -78,27 +78,29 @@
 						</view>
 					</view>
 				</view>
-        <view class="form-item border-bottom">
+				<!-- 接送陪诊 -->
+				<view class="form-item border-bottom" v-if="serviceList.stype == 15">
 					<view class="form-item-label">
 						接送地址
 					</view>
 					<view class="form-item-select">
-						<input class="uni-input" placeholder="请填写就诊人所在地址" placeholder-style="color:#999"/>
+						<input class="uni-input" placeholder="请填写就诊人所在地址" placeholder-style="color:#999"
+							v-model="order.receiveAdress" />
 					</view>
 				</view>
-        <view class="form-item ">
+				<view class="form-item ">
 					<view class="form-item-label">
 						联系电话
 					</view>
 					<view class="form-item-select">
-						<input class="uni-input" placeholder="请填写您的联系电话" placeholder-style="color:#999" type="tel"/>
+						<input class="uni-input" placeholder="请填写您的联系电话" placeholder-style="color:#999" type="tel"
+							v-model="order.tel" />
 					</view>
 				</view>
 			</view>
-      <!-- 服务详情 2-->
-      <view class="form-box"
-				v-if="serviceList.stype == 30 || serviceList.stype == 40">
-        <!-- 送取结果，代跑取药 -->
+			<!-- 服务详情 2-->
+			<view class="form-box" v-if="serviceList.stype == 30 || serviceList.stype == 40">
+				<!-- 送取结果，代跑取药 -->
 				<view class="form-item border-bottom">
 					<view class="form-item-label">
 						所在医院
@@ -120,7 +122,7 @@
 						服务时间
 					</view>
 					<view class="form-item-select">
-						<timePicker textType="service_time"></timePicker>
+						<timePicker textType="service_time" @timestampChange="onTimeChange"></timePicker>
 					</view>
 				</view>
 				<view class="form-item border-bottom">
@@ -136,61 +138,58 @@
 						</view>
 					</view>
 				</view>
-        <view class="form-item ">
+				<view class="form-item ">
 					<view class="form-item-label">
 						联系电话
 					</view>
 					<view class="form-item-select">
-						<input class="uni-input" placeholder="请填写您的联系电话" placeholder-style="color:#999" type="tel"/>
+						<input class="uni-input" placeholder="请填写您的联系电话" placeholder-style="color:#999" type="tel"
+							v-model="order.tel" />
 					</view>
 				</view>
 			</view>
 		</view>
-    <!-- 服务需求 -->
-    <view class="content-description">
-      <view class="descrip-title">
-        服务需求
-      </view>
-      <view class="descrip-text ">
-        <textarea auto-height placeholder="请简单描述您要就诊的科室" placeholder-style="color:#999" value=""/>
-      </view>
-    </view>
-    <!-- 占位符 -->
-    <view style="height: 300rpx;"></view>
-    <!-- 悬浮提交按钮 -->
-    <view class="vp-foot">
-      <view class="xieyi">
-        <view class="checkbox" @click="onXieyiChange">
-          <image
-            :src="is_xieyi ? SelectIcon : noSelectIcon"
-          />
-        </view>
-        <view class="xieyi-text" >
-          <text>我已阅读并同意</text>
-          <navigator
-            :url="cfg.page_xy"
-            style="color: #0bb584"
-          >
-            《用户协议》
-          </navigator>
-          <text>和</text>
-          <navigator :url="cfg.page_fw" style="color: #0bb584">《服务协议》</navigator>
-        </view>
-      </view>
-      <view class="xieyi-bt">
-        <button form-type="submit">
-          确定下单
-          <block v-if="order.price > 0"> (支付{{ order.price }}元)</block>
-        </button>
-      </view>
-    </view>
+		<!-- 服务需求 -->
+		<view class="content-description">
+			<view class="descrip-title">
+				服务需求
+			</view>
+			<view class="descrip-text ">
+				<textarea auto-height placeholder="请简单描述您要就诊的科室" placeholder-style="color:#999"
+					v-model="order.demand" />
+			</view>
+		</view>
+		<!-- 占位符 -->
+		<view style="height: 300rpx;"></view>
+		<!-- 悬浮提交按钮 -->
+		<view class="vp-foot">
+			<view class="xieyi">
+				<view class="checkbox" @click="onXieyiChange">
+					<image :src="is_xieyi ? SelectIcon : noSelectIcon" />
+				</view>
+				<view class="xieyi-text">
+					<text>我已阅读并同意</text>
+					<navigator :url="cfg.page_xy" style="color: #0bb584">
+						《用户协议》
+					</navigator>
+					<text>和</text>
+					<navigator :url="cfg.page_fw" style="color: #0bb584">《服务协议》</navigator>
+				</view>
+			</view>
+			<view class="xieyi-bt" @click="onSubmitOrder">
+				<button form-type="submit" :class="is_xieyi ? 'button-select' : ''">
+					确定下单
+					<block v-if="order.price > 0"> (支付{{ order.price }}元)</block>
+				</button>
+			</view>
+		</view>
 	</view>
 </template>
 
-<script setup>noSelectIcon
+<script setup>
 	import bannerBg from '@/static/resource/banner-bg.jpg'
-  import noSelectIcon  from '@/static/resource/no_select.png'
-  import SelectIcon from '@/static/resource/select.png'
+	import noSelectIcon from '@/static/resource/no_select.png'
+	import SelectIcon from '@/static/resource/select.png'
 	import {
 		ref
 	} from 'vue'
@@ -222,15 +221,18 @@
 			cityName: '',
 			countyName: '',
 			detailInfo: ''
-		}
+		},
+		receiveAdress: '',
+		tel: '',
+		demand: '',
 	})
-  // 是否勾选协议
-  const is_xieyi = ref(false)
-  // 协议跳转路径
-  const cfg = ref({
-    page_xy: '',
-    page_fw: ''
-  })
+	// 是否勾选协议
+	const is_xieyi = ref(false)
+	// 协议跳转路径
+	const cfg = ref({
+		page_xy: '',
+		page_fw: ''
+	})
 	const app = getApp()
 	// 页面服务数据
 	const getHospitalData = (options) => {
@@ -245,9 +247,10 @@
 				hospitalList.value = res.data.hospitals
 				if (options.hid) {
 					hospitalIndex.value = res.data.hospitals.findIndex(item => item.id == options.hid)
-          console.log('医院数据');
+					console.log('医院数据', hospitalList.value, hospitalIndex.value);
 					// order.value.price = res.data.hospitals[hospitalIndex.value].service_price
-          order.value.price = res.data.hospitals.find(item => item.id == options.hid).service_price
+					order.value.price = res.data.hospitals.find(item => item.id == options.hid)
+						.service_price
 				}
 			}
 		})
@@ -256,7 +259,13 @@
 	const onHospitalChange = (e) => {
 		hospitalIndex.value = e.detail.value
 		order.value.price = hospitalList.value[hospitalIndex.value].service_price
+		console.log('切换医院hospitalIndex', hospitalIndex.value)
 		console.log('切换医院价格', order.value.price)
+	}
+	// 就诊时间
+	const onTimeChange = (timestamp) => {
+		order.value.starttime = timestamp
+		console.log('就诊时间', order.value.starttime)
 	}
 	// 跳转到就诊人选择界面
 	const onClinetChange = () => {
@@ -264,34 +273,127 @@
 			url: '/pages/clients/index?act=select'
 		})
 	}
-  // 就诊人信息列表
-  const clientsList = ref({
-    name: ''
-  });
-  // 通过自定义事件获取就诊人信息
-  uni.$on('clientChange', (data) => {
-    console.log('获取到就诊人信息', data)
-    clientsList.value.name = data.name
-  }) 
-  // 选择收件地址 - 不是页面的跳转，而是微信自带的获取地址的api
-  const onAdressChange = () => {
-    uni.chooseAddress({
-      success: res => {
-        console.log('获取地址成功', res)
-        order.value.address.userName = res.userName
-        order.value.address.cityName = res.cityName
-        order.value.address.countyName = res.countyName
-        order.value.address.detailInfo = res.detailInfo
-      },
-      fail: err => {
-        console.log('获取地址失败', err)
-      }
-    })
-  }
-  // 是否同意协议
-  const onXieyiChange = () => {
+	// 就诊人信息列表
+	const clientsList = ref({
+		name: '',
+		age: '',
+		mobile: '',
+		sex: '',
+		id: ''
+	});
+	// 通过自定义事件获取就诊人信息
+	uni.$on('clientChange', (data) => {
+		console.log('获取到就诊人信息', data)
+		clientsList.value.name = data.name
+		clientsList.value.age = data.age
+		clientsList.value.mobile = data.mobile
+		clientsList.value.sex = data.sex
+		clientsList.value.id = data.user_id
+	})
+	// 选择收件地址 - 不是页面的跳转，而是微信自带的获取地址的api
+	const onAdressChange = () => {
+		uni.chooseAddress({
+			success: res => {
+				console.log('获取地址成功', res)
+				order.value.address.userName = res.userName
+				order.value.address.cityName = res.cityName
+				order.value.address.countyName = res.countyName
+				order.value.address.detailInfo = res.detailInfo
+			},
+			fail: err => {
+				console.log('获取地址失败', err)
 
-  }
+			}
+		})
+	}
+	// 是否同意协议
+	const onXieyiChange = () => {
+		is_xieyi.value = !is_xieyi.value
+	}
+	// 下单
+	const onSubmitOrder = () => {
+		if (!is_xieyi.value) {
+			return uni.showToast({
+				title: '请先阅读并同意协议',
+				icon: 'none',
+				duration: 1000
+			})
+		}
+		const orderData = order.value //订单数据
+		const serviceData = serviceList.value //服务数据
+		const hospitalData = hospitalList.value //医院数据
+		const clientData = clientsList.value //就诊人数据
+		// 医院选择校验
+		if (serviceData.stype < 100) {
+			if (hospitalIndex.value < 0) {
+				return uni.showToast({
+					title: '请选择医院',
+					icon: 'none',
+					duration: 1000
+				})
+			}
+			orderData.hospital_id = hospitalData[hospitalIndex.value].id
+			orderData.hospital_name = hospitalData[hospitalIndex.value].name
+		}
+		// 就诊时间
+		if (orderData.starttime == '') {
+			return uni.showToast({
+				title: '请选择就诊时间',
+				icon: 'none',
+				duration: 1000
+			})
+		}
+		// 服务类型为就诊
+		if (serviceData.stype == 10 || serviceData.stype == 15 || serviceData.stype == 20) {
+			// 就诊人校验
+			if (!clientData.id) {
+				return uni.showToast({
+					title: '请选择就诊人',
+					icon: 'none',
+					duration: 1000
+				})
+			}
+			// 先创建对象，再赋值
+			// orderData.client = {}
+			// orderData.client.age = clientData.age
+			// 整体赋值方法
+			orderData.client = {
+				age: clientData.age,
+				name: clientData.name,
+				sex: clientData.sex,
+				mobile: clientData.mobile
+			}
+			// 接送地址验证
+			if (serviceData.stype == 15) {
+				if (!orderData.receiveAdress) {
+					return uni.showToast({
+						title: '请填写就诊人所在地址',
+						icon: 'none',
+						duration: 1000
+					})
+				}
+			}
+		}
+		if (serviceData.stype == 30 || serviceData.stype == 40) {
+			// 收件地址
+			if (!orderData.address.userName) {
+				return uni.showToast({
+					title: '请填写收件人信息',
+					icon: 'none',
+					duration: 1000
+				})
+			}
+		}
+		// 判断联系电话
+		if (!orderData.tel) {
+			return uni.showToast({
+				title: '请填写联系电话',
+				icon: 'none',
+				duration: 1000
+			})
+		}
+		console.log('====提交数据orderData', orderData)
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -460,65 +562,86 @@
 		padding: 0 20rpx;
 		text-align: center;
 	}
-  .content-description {
-    margin: 40rpx 20rpx 0 20rpx;
-  }
-  .descrip-title {
-    font-size: 32rpx;
-    font-weight: bold;
-    margin-bottom: 20rpx;
-  }
-  .descrip-text textarea {
-    background-color: #fff;
-    padding: 20rpx;
-    border-radius: 20rpx;
-    overflow: hidden;
-    width: calc(100% - 40rpx);
-    min-height: 200rpx;
-  }
-  // 悬浮提交按钮
-  .vp-foot {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-  }
-  .vp-foot .xieyi {
-    height: 100rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .xieyi .checkbox {
-    margin-right: 10rpx;
-  }
-  .xieyi .checkbox image {
-    width: 40rpx;
-    height: 40rpx;
-    vertical-align: middle;
-  }
-  .xieyi .xieyi-text {
-    display: flex;
-  }
-  // 按钮
-  .vp-foot .xieyi-bt {
-    height: 120rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    background-color: #EEF1EE;
-    color: #999;
-    font-size: 32rpx;
-  }
-  .xieyi-bt button {
-    width: 100%;
-    height: 100%;
-    background-color: #EEF1EE;
-    line-height: 120rpx;
-    color: #999;
-  }
+
+	.content-description {
+		margin: 40rpx 20rpx 0 20rpx;
+	}
+
+	.descrip-title {
+		font-size: 32rpx;
+		font-weight: bold;
+		margin-bottom: 20rpx;
+	}
+
+	.descrip-text textarea {
+		background-color: #fff;
+		padding: 20rpx;
+		border-radius: 20rpx;
+		overflow: hidden;
+		width: calc(100% - 40rpx);
+		min-height: 200rpx;
+	}
+
+	// 悬浮提交按钮
+	.vp-foot {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		z-index: 999;
+		width: 100%;
+		background-color: #fff;
+		display: flex;
+		flex-direction: column;
+		padding: 20rpx;
+	}
+
+	.vp-foot .xieyi {
+		width: calc(100% - 40rpx);
+		height: 80rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.xieyi .checkbox {
+		margin-right: 10rpx;
+		width: 40rpx;
+		height: 40rpx;
+	}
+
+	.xieyi .checkbox image {
+		width: 40rpx;
+		height: 40rpx;
+		vertical-align: middle;
+	}
+
+	.xieyi .xieyi-text {
+		display: flex;
+	}
+
+	// 按钮
+	.vp-foot .xieyi-bt {
+		width: calc(100% - 40rpx);
+		height: 100rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: bold;
+		background-color: #EEF1EE;
+		color: #999;
+		font-size: 32rpx;
+	}
+
+	.xieyi-bt button {
+		width: 100%;
+		height: 100%;
+		background-color: #EEF1EE;
+		line-height: 100rpx;
+		color: #999;
+	}
+
+	.xieyi-bt .button-select {
+		background-color: #0bb584;
+		color: #fff;
+	}
 </style>
