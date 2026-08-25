@@ -127,10 +127,10 @@
 					<view class="form-item-label">
 						收件信息
 					</view>
-					<view class="form-item-select" @click="onClinetChange">
+					<view class="form-item-select" @click="onAdressChange">
 						<view class="picker-input">
-							<text :class="clientsList.name != '' ? 'selected': 'placeholder'">
-								{{ clientsList.name ? clientsList.name : '请选择就诊人' }}
+							<text :class="order.address.userName != '' ? 'selected': 'placeholder'">
+								{{ order.address.userName ? `${order.address.userName}(${order.address.cityName}${order.address.countyName})` : '请选择收件消息' }}
 							</text>
 							<image src="@/static/resource/service_right.png" />
 						</view>
@@ -273,6 +273,21 @@
     console.log('获取到就诊人信息', data)
     clientsList.value.name = data.name
   }) 
+  // 选择收件地址 - 不是页面的跳转，而是微信自带的获取地址的api
+  const onAdressChange = () => {
+    uni.chooseAddress({
+      success: res => {
+        console.log('获取地址成功', res)
+        order.value.address.userName = res.userName
+        order.value.address.cityName = res.cityName
+        order.value.address.countyName = res.countyName
+        order.value.address.detailInfo = res.detailInfo
+      },
+      fail: err => {
+        console.log('获取地址失败', err)
+      }
+    })
+  }
   // 是否同意协议
   const onXieyiChange = () => {
 
