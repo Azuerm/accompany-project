@@ -62,7 +62,7 @@
 						就诊时间
 					</view>
 					<view class="form-item-select">
-						<timePicker></timePicker>
+						<timePicker textType="consult_time"></timePicker>
 					</view>
 				</view>
 				<view class="form-item border-bottom">
@@ -84,6 +84,56 @@
 					</view>
 					<view class="form-item-select">
 						<input class="uni-input" placeholder="请填写就诊人所在地址" placeholder-style="color:#999"/>
+					</view>
+				</view>
+        <view class="form-item ">
+					<view class="form-item-label">
+						联系电话
+					</view>
+					<view class="form-item-select">
+						<input class="uni-input" placeholder="请填写您的联系电话" placeholder-style="color:#999" type="tel"/>
+					</view>
+				</view>
+			</view>
+      <!-- 服务详情 2-->
+      <view class="form-box"
+				v-if="serviceList.stype == 30 || serviceList.stype == 40">
+        <!-- 送取结果，代跑取药 -->
+				<view class="form-item border-bottom">
+					<view class="form-item-label">
+						所在医院
+					</view>
+					<view class="form-item-select">
+						<picker @change="onHospitalChange" :value="hospitalIndex" :range="hospitalList"
+							range-key="name">
+							<view class="picker-input">
+								<text :class="hospitalIndex >= 0 ? 'selected': 'placeholder'">
+									{{ hospitalIndex >= 0 ? hospitalList[hospitalIndex].name : '请选择就诊的医院'}}
+								</text>
+								<image src="@/static/resource/service_right.png" />
+							</view>
+						</picker>
+					</view>
+				</view>
+				<view class="form-item border-bottom">
+					<view class="form-item-label">
+						服务时间
+					</view>
+					<view class="form-item-select">
+						<timePicker textType="service_time"></timePicker>
+					</view>
+				</view>
+				<view class="form-item border-bottom">
+					<view class="form-item-label">
+						收件信息
+					</view>
+					<view class="form-item-select" @click="onClinetChange">
+						<view class="picker-input">
+							<text :class="clientsList.name != '' ? 'selected': 'placeholder'">
+								{{ clientsList.name ? clientsList.name : '请选择就诊人' }}
+							</text>
+							<image src="@/static/resource/service_right.png" />
+						</view>
 					</view>
 				</view>
         <view class="form-item ">

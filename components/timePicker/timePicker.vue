@@ -12,7 +12,7 @@
       <view class="picker-display">
         <!-- 显示选中的时间，或者默认占位符 -->
         <text :class="{ 'placeholder': !selectedTimeStr }">
-          {{ selectedTimeStr || '请选择就诊时间' }}
+          {{ selectedTimeStr || textType == 'consult_time' ? '请选择就诊时间' : '请选择期待服务时间' }}
         </text>
         <image
           src="@/static/resource/service_right.png"
@@ -23,8 +23,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-
+import { ref, onMounted, defineProps } from 'vue';
+const { textType } = defineProps({
+  textType: {
+    type: String
+  }
+})
 // --- 状态定义 ---
 const multiArray = ref([[], []]); // [日期数组, 时间数组]
 const multiIndex = ref([0, 0]);   // 当前选中的索引 [日期索引, 时间索引]
