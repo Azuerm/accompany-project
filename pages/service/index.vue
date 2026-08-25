@@ -188,11 +188,13 @@
 		<uni-popup ref="popupPhone" type="center" :is-mask-click="false" background-color="#fff" border-radius=" 20rpx">
 			<view class="popup-content">
 				<view class="group">
-					<input type="tel" placeholder="手机号" v-model="valiMobile.phone" class="group-phone" placeholder-class="grayText">
+					<input type="tel" placeholder="手机号" v-model="valiMobile.phone" class="group-phone"
+						placeholder-class="grayText">
 				</view>
 				<view class="group">
-					<input placeholder="验证码" v-model="valiMobile.realValiMobile" class="group-code" placeholder-class="grayText">
-					<text class="group-time">{{ countdown.validText }}</text>
+					<input placeholder="验证码" v-model="valiMobile.realValiMobile" class="group-code"
+						placeholder-class="grayText">
+					<text class="group-time" @click="countdownChange">{{ countdown.validText }}</text>
 				</view>
 			</view>
 			<div class="btns">
@@ -250,6 +252,7 @@
 		page_xy: '',
 		page_fw: ''
 	})
+
 	// 手机验证
 	const valiMobile = ref({
 		phone: '',
@@ -340,7 +343,6 @@
 	}
 	// 下单
 	const onSubmitOrder = () => {
-		popupPhone.value.open()
 		if (!is_xieyi.value) {
 			return uni.showToast({
 				title: '请先阅读并同意协议',
@@ -422,6 +424,35 @@
 			})
 		}
 		console.log('====提交数据orderData', orderData)
+
+		// 判断用户是否登录
+		if (!uni.getStorageSync('token')) {
+			popupPhone.value.open()
+		}
+	}
+	// 获取手机验证码
+	let flag = false // 防止重复点击
+	const countdownChange = () => {
+		if (!valiMobile.value.phone) {
+			return uni.showToast({
+				title: '请输入手机号',
+				icon: 'none',
+				duration: 1000
+			})
+		}
+		if (flag) return // 已经点击过一次后，不准点击了
+		const time = setInterval(() => {
+			if (countdown.value.time < 0) {
+				countdown.value.validText = '获取验证码'
+				countdown.value.time = 60
+				clearInterval(time) // 清除定时器
+				flag = false
+			} else {
+				countdown.value.time -= 1
+				countdown.value.validText = `剩余${countdown.value.time}s`
+			}
+		}, 1000);
+		flag = true // 第一次点击设置为true
 	}
 </script>
 
@@ -676,54 +707,62 @@
 
 	// 弹出层样式
 	.popup-content {
-    box-sizing: border-box;
+		box-sizing: border-box;
 		width: 600rpx;
 		padding: 40rpx;
 	}
+
 	.group {
-    display: flex;
-    height: 100rpx;
-    line-height: 100rpx;
-  }
-  .group .group-phone {
-    display: inline-block;
-    height: 100%;
-    line-height: 100rpx;
-    widows: 100%;
-  }
+		display: flex;
+		height: 100rpx;
+		line-height: 100rpx;
+	}
+
+	.group .group-phone {
+		display: inline-block;
+		height: 100%;
+		line-height: 100rpx;
+		widows: 100%;
+	}
+
 	.group .group-code {
-    flex: 2;
-    height: 100%;
-    line-height: 100rpx;
-  }
+		flex: 2;
+		height: 100%;
+		line-height: 100rpx;
+	}
+
 	.group .group-time {
-    flex: 1;
-    height: 100%;
-    line-height: 100rpx;
-    color: #5393dc;
-    text-align: center;
-  }
-  .grayText {
-    font-weight: bold;
-    color: #999;
-    // height: 100rpx;
-    line-height: 100rpx;
-  }
-  .btns {
-    width: 600rpx;
-    display: flex;
-    font-size: 32rpx;
-    font-weight: bold;
-    height: 80rpx;
-  }
-  .btns .cancel {
-    flex: 1;
-    text-align: center;
-    color: #999
-  }
-  .btns .confirm {
-    flex: 1;
-    color: red;
-    text-align: center;
-  }
+		flex: 1;
+		height: 100%;
+		line-height: 100rpx;
+		color: #5393dc;
+		text-align: center;
+	}
+
+	.grayText {
+		font-weight: bold;
+		color: #999;
+		// height: 100rpx;
+		line-height: 100rpx;
+	}
+
+	.btns {
+		width: 600rpx;
+		display: flex;
+		font-size: 32rpx;
+		font-weight: bold;
+		height: 80rpx;
+	}
+
+	.btns .cancel {
+		flex: 1;
+		text-align: center;
+		color: #999
+	}
+
+	.btns .confirm {
+		flex: 1;
+		color: red;
+		text-align: center;
+	}
 </style>
