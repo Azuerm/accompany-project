@@ -198,8 +198,8 @@
 				</view>
 			</view>
 			<div class="btns">
-				<view class="cancel">取消</view>
-				<view class="confirm">确定</view>
+				<view class="cancel" @click="cancelPhone">取消</view>
+				<view class="confirm" @click="confirmPhone">确定</view>
 			</div>
 		</uni-popup>
 	</view>
@@ -428,7 +428,9 @@
 		// 判断用户是否登录
 		if (!uni.getStorageSync('token')) {
 			popupPhone.value.open()
-		}
+		} else {
+      // 下单逻辑
+    }
 	}
 	// 获取手机验证码
 	let flag = false // 防止重复点击
@@ -453,7 +455,65 @@
 			}
 		}, 1000);
 		flag = true // 第一次点击设置为true
+    // 发送验证码
+    app.globalData.utils.request ({
+      url: '/get/code',
+      method: 'POST',
+      data: {
+        tel: valiMobile.value.phone
+      },
+      success: res => {
+        uni.showToast({
+          title: '验证码发送成功，请尽快验证',
+          icon: 'success',
+          duration: 1000
+        })
+      },
+      fail: res => {
+        uni.showToast({
+          title: res.msg ,
+          icon: 'warning',
+          duration: 1000
+        })
+      }
+    })
 	}
+  // 取消验证
+  const cancelPhone = () => {
+    popupPhone.value.close()
+  }
+  // 验证 验证码是否正确
+  const confirmPhone = () => {
+    // 校验手机号和验证码
+    if (!valiMobile.value.realValiMobile || !valiMobile.value.phone) {
+      return uni.showToast({
+        title: '请检查填写数据',
+        icon: 'none',
+				duration: 1000
+      })
+    }
+    // 验证短信 - 获取token，存储到本地
+    app.globalData.utils.request ({
+      url: '/user/authentication',
+      method: 'POST',
+      data: {
+        tel: valiMobile.value.phone,
+        code: valiMobile.value.realValiMobile
+      },
+      success: res => {
+        // 将token缓存
+        uni.setStorageSync('token', res.data.token)
+        // 下单逻辑
+      },
+      fail: res => {
+        uni.showToast({
+          title: res.msg ,
+          icon: 'warning',
+          duration: 1000
+        })
+      }
+    })
+  }
 </script>
 
 <style lang="scss" scoped>

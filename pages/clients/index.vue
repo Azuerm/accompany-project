@@ -1,5 +1,5 @@
 <template>
-  <view class="" style="background-color: #EEF1EE; min-height: 100vh;">
+  <view class="" style="background-color: #EEF1EE; min-height: 100vh; overflow: hidden;">
     <view class="cell-box" v-for="item in clientsList" :key="item.id" >
       <view class="user-detail">
         <view class="name-text">
