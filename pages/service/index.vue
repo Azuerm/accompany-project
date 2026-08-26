@@ -341,6 +341,8 @@
 	const onXieyiChange = () => {
 		is_xieyi.value = !is_xieyi.value
 	}
+  // 订单参数 - 源数据
+  const submitOrder = ref({})
 	// 下单
 	const onSubmitOrder = () => {
 		if (!is_xieyi.value) {
@@ -354,6 +356,12 @@
 		const serviceData = serviceList.value //服务数据
 		const hospitalData = hospitalList.value //医院数据
 		const clientData = clientsList.value //就诊人数据
+
+    orderData.service_code = serviceData.service_code
+    orderData.service_name = serviceData.service_name
+    orderData.service_id = serviceData.id
+    orderData.service_stype = serviceData.stype
+
 		// 医院选择校验
 		if (serviceData.stype < 100) {
 			if (hospitalIndex.value < 0) {
@@ -424,12 +432,13 @@
 			})
 		}
 		console.log('====提交数据orderData', orderData)
-
+    submitOrder.value = orderData
 		// 判断用户是否登录
 		if (!uni.getStorageSync('token')) {
 			popupPhone.value.open()
 		} else {
       // 下单逻辑
+      createOrder(submitOrder.value)
     }
 	}
 	// 获取手机验证码
@@ -504,6 +513,7 @@
         // 将token缓存
         uni.setStorageSync('token', res.data.token)
         // 下单逻辑
+        createOrder(submitOrder.value)
       },
       fail: res => {
         uni.showToast({
@@ -511,6 +521,25 @@
           icon: 'warning',
           duration: 1000
         })
+      }
+    })
+  }
+  // 下单逻辑 --- 创建订单
+  const createOrder = (orderData) => {
+    console.log('订单参数', orderData)
+    // 调用下单接口
+    app.globalData.utils.request ({
+      url: '/pay/createOrder',
+      method: 'POST',
+      header: {
+        token: uni.getStorageSync('token')
+      },
+      data: orderData,
+      success: res => {
+
+      },
+      fail: res => {
+        
       }
     })
   }
