@@ -11,7 +11,7 @@
 		{
 			"path": "pages/order/index",
 			"style": {
-				"navigationBarTitleText": "",
+				"navigationBarTitleText": "我的订单",
 				"navigationBarBackgroundColor": "#ffffff"
 			}
 		},
