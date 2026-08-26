@@ -202,6 +202,21 @@
 				<view class="confirm" @click="confirmPhone">确定</view>
 			</div>
 		</uni-popup>
+    <!-- 二维码弹出层 -->
+    <uni-popup ref="popupQrCode" type="center" :is-mask-click="false" background-color="#fff" border-radius=" 20rpx">
+      <view class="pay-box">
+        <view class="pay-icon">
+          <image
+            :src="cancelIcon"
+            style="display: inline-block; width: 30rpx; height: 30rpx; "
+            @click="payment"
+          />
+        </view>
+        <view style="text-align: center; padding-bottom: 20rpx;">微信支付</view>
+        <canvas id="qrcode" canvas-id="qrcode" style="width: 300rpx;height: 300rpx; "></canvas>
+        <view style="text-align: center; padding: 20rpx 0;" >请用本人微信扫描以上二维码</view>
+      </view>
+    </uni-popup>
 	</view>
 </template>
 
@@ -209,12 +224,14 @@
 	import bannerBg from '@/static/resource/banner-bg.jpg'
 	import noSelectIcon from '@/static/resource/no_select.png'
 	import SelectIcon from '@/static/resource/select.png'
+  import cancelIcon from '@/static/resource/cancel.png'
 	import {
 		ref
 	} from 'vue'
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
+  import UQRCode from 'uqrcodejs'
 	import defaultAvatar from '@/static/resource/avatar.png'
 	import TimePicker from '../../components/timePicker/timePicker.vue'
 	// 当前进度百分比
@@ -259,6 +276,7 @@
 		realValiMobile: ''
 	})
 	const popupPhone = ref()
+  const popupQrCode = ref()
 	// 验证码显示
 	const countdown = ref({
 		validText: '获取验证码',
@@ -524,6 +542,8 @@
       }
     })
   }
+  const { windowWidth } = uni.getSystemInfoSync()
+  const rpxRatio = 750 / windowWidth
   // 下单逻辑 --- 创建订单
   const createOrder = (orderData) => {
     console.log('订单参数', orderData)
@@ -536,12 +556,30 @@
       },
       data: orderData,
       success: res => {
-
+        // 打开二维码弹窗
+        popupQrCode.value.open()
+        var qr = new UQRCode();
+        // 设置二维码内容
+        qr.data = res.wx_code;
+        // 设置二维码大小，必须与canvas设置的宽高一致
+        qr.size = Math.floor(300 / rpxRatio);
+        // 调用制作二维码方法
+        qr.make();
+        // 获取canvas上下文
+        var canvasContext = uni.createCanvasContext('qrcode'); // 如果是组件，this必须传入
+        // 设置***实例的canvas上下文
+        qr.canvasContext = canvasContext;
+        // 调用绘制方法将二维码图案绘制到canvas上
+        qr.drawCanvas();
       },
       fail: res => {
-        
+
       }
     })
+  }
+  // 跳转到订单列表
+  const payment = () => {
+    uni.switchTab({ url: '/pages/order/index' })
   }
 </script>
 
@@ -854,4 +892,17 @@
 		color: red;
 		text-align: center;
 	}
+  .pay-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20rpx;
+  }
+  .pay-box .pay-icon {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
 </style>
