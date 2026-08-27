@@ -26,7 +26,7 @@
       </view>
       <view v-else>
         <view class="order-item" v-for="(item, index) in orderList" :key="index">
-          <view class="order-detail" @tap="toOrderPage">
+          <view class="order-detail" @tap="toOrderPage(item.out_trade_no)">
             <view class="pic-text">
               <view class="pic">
                 <image :src="item.service_logo_image_url || defaultAvatar" mode="widthFix" />
@@ -105,6 +105,7 @@
   const currentItem = ref(0)
   // 订单列表
   const orderList = ref([])
+
   // 倒计时数据 { orderId: 剩余毫秒数 }
   const countdownMap = ref({})
   // 定时器引用
@@ -136,8 +137,10 @@
     })
   }
   // 跳转到订单详情页面
-  const toOrderPage = () => {
-    uni.navigateTo({ url: '/pages/order/orderPage' })
+  const toOrderPage = (id) => {
+    uni.navigateTo({ 
+      url: '/pages/order/orderPage?oid=' + id
+     })
   }
 
   // 初始化倒计时
@@ -154,13 +157,17 @@
     countdownMap.value = map
     // 每秒递减
     countdownTimer = setInterval(() => {
+      let expired = false
       for (const key in countdownMap.value) {
         if (countdownMap.value[key] > 1000) {
           countdownMap.value[key] -= 1000
-        } else {
+        } else if (countdownMap.value[key] > 0) {
           countdownMap.value[key] = 0
+          expired = true // 标记有订单刚好到期
         }
       }
+      // 有订单到期时刷新列表（后端会返回最新状态）
+      if (expired) loadList()
     }, 1000)
   }
 
