@@ -47,7 +47,13 @@
 			"style": {
 				"navigationBarTitleText": ""
 			}
-		}
+    },
+    {
+      "path": "pages/order/orderPage",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    }
 	],
 	"tabBar": {
 		"color": "#535353",

@@ -298,8 +298,7 @@
 					hospitalIndex.value = res.data.hospitals.findIndex(item => item.id == options.hid)
 					console.log('医院数据', hospitalList.value, hospitalIndex.value);
 					// order.value.price = res.data.hospitals[hospitalIndex.value].service_price
-					order.value.price = res.data.hospitals.find(item => item.id == options.hid)
-						.service_price
+					order.value.price = res.data.hospitals.find(item => item.id == options.hid).service_price
 				}
 			}
 		})
@@ -375,8 +374,8 @@
 		const hospitalData = hospitalList.value //医院数据
 		const clientData = clientsList.value //就诊人数据
 
-    orderData.service_code = serviceData.service_code
-    orderData.service_name = serviceData.service_name
+    orderData.service_code = serviceData.code
+    orderData.service_name = serviceData.name
     orderData.service_id = serviceData.id
     orderData.service_stype = serviceData.stype
 
