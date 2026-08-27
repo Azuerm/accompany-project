@@ -22,6 +22,10 @@
 					<text class="od-item-status">服务完成</text>
 				</view>
 			</view>
+			<!-- 支付倒计时 -->
+			<view class="od-countdown" v-if="orderList.trade_state == '待支付' && orderList._exp_time > 0">
+				<text>支付剩余时间：{{ formatCountdown(countdownMap['detail']) }}</text>
+			</view>
 		</view>
 
 	</view>
@@ -34,9 +38,14 @@
     computed
 	} from 'vue'
 	import {
-		onLoad
+		onLoad,
+    onHide,
+    onUnload
 	} from '@dcloudio/uni-app'
+  import { useCountdown } from '@/hooks/useCountdown'
   const app = getApp()
+  // 倒计时逻辑抽离到hooks/useCountdown.js，供订单列表页和订单详情页共用
+  const { countdownMap, startCountdown, stopCountdown, formatCountdown } = useCountdown()
   // 订单数据
   const orderList = ref({})
   // 订单状态 => 进度映射
@@ -66,9 +75,20 @@
       success: (res) => {
         console.log('订单详情', res);
         orderList.value  = res.data
+        // 待支付订单启动倒计时，key固定为detail，到期后重新请求订单详情获取最新状态
+        if (res.data.trade_state == '待支付' && res.data._exp_time > 0) {
+          startCountdown([{ key: 'detail', remain: res.data._exp_time }], () => getOrderDetail(params))
+        }
       }
     })
   }
+  // 页面隐藏或卸载时清除定时器
+  onHide(() => {
+    stopCountdown()
+  })
+  onUnload(() => {
+    stopCountdown()
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -123,10 +143,17 @@
 		overflow: hidden;
 	}
 
-	.od-banner .od-progress-text .od-progress-item {
-		flex: 1;
-		text-align: center;
-		// color: #fff;
-		// font-weight: bold;
-	}
+ 	.od-banner .od-progress-text .od-progress-item {
+ 		flex: 1;
+ 		text-align: center;
+ 		// color: #fff;
+ 		// font-weight: bold;
+ 	}
+
+ 	// 支付倒计时
+ 	.od-countdown {
+ 		margin-top: 10rpx;
+ 		font-size: 26rpx;
+ 		color: #ffa200;
+ 	}
 </style>

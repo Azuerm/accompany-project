@@ -95,7 +95,10 @@
 		onShow,
     onHide
 	} from '@dcloudio/uni-app'
+  import { useCountdown } from '@/hooks/useCountdown'
   const app = getApp()
+  // 倒计时逻辑抽离到hooks/useCountdown.js，供订单列表页和订单详情页共用
+  const { countdownMap, startCountdown, stopCountdown, formatCountdown } = useCountdown()
   onShow(() => {
     // 将onLoad改为onShow，是因为：order在tarbar中，在tarbar中onLoad只会执行一次，所以需要onShow
     // 调用订单列表
@@ -105,11 +108,6 @@
   const currentItem = ref(0)
   // 订单列表
   const orderList = ref([])
-
-  // 倒计时数据 { orderId: 剩余毫秒数 }
-  const countdownMap = ref({})
-  // 定时器引用
-  let countdownTimer = null
 
   const onCurrentItemChange = (index) => {
     if (currentItem.value == index) return
@@ -131,8 +129,14 @@
       success: (res) => {
         console.log('获取订单列表成功',res)
         orderList.value = res.data
-        // 初始化倒计时数据
-        initCountdown()
+        // 初始化倒计时：提取待支付订单的剩余时间，key用index对应列表项
+        const items = []
+        orderList.value.forEach((item, index) => {
+          if (item.trade_state == '待支付' && item._exp_time > 0) {
+            items.push({ key: index, remain: item._exp_time })
+          }
+        })
+        startCountdown(items, () => loadList())
       }
     })
   }
@@ -143,40 +147,9 @@
      })
   }
 
-  // 初始化倒计时
-  const initCountdown = () => {
-    // 清除上一次的定时器
-    if (countdownTimer) clearInterval(countdownTimer)
-    // 为每个待支付订单设置初始倒计时值
-    const map = {}
-    orderList.value.forEach((item, index) => {
-      if (item.trade_state == '待支付' && item._exp_time > 0) {
-        map[index] = item._exp_time
-      }
-    })
-    countdownMap.value = map
-    // 每秒递减
-    countdownTimer = setInterval(() => {
-      let expired = false
-      for (const key in countdownMap.value) {
-        if (countdownMap.value[key] > 1000) {
-          countdownMap.value[key] -= 1000
-        } else if (countdownMap.value[key] > 0) {
-          countdownMap.value[key] = 0
-          expired = true // 标记有订单刚好到期
-        }
-      }
-      // 有订单到期时刷新列表（后端会返回最新状态）
-      if (expired) loadList()
-    }, 1000)
-  }
-
   // 页面隐藏时清除定时器
   onHide(() => {
-    if (countdownTimer) {
-      clearInterval(countdownTimer)
-      countdownTimer = null
-    }
+    stopCountdown()
   })
 
   // 格式化时间
@@ -187,14 +160,6 @@
     const hours = String(date.getHours()).padStart(2, '0')
     const minutes = String(date.getMinutes()).padStart(2, '0')
     return `${month}-${day} ${hours}:${minutes}`
-  }
-  // 格式化时间:时分秒
-  const formatCountdown = (ms) => {
-    const totalSeconds = Math.floor(ms / 1000)
-    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
-    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0')
-    const seconds = String(totalSeconds % 60).padStart(2, '0')
-    return `${hours}:${minutes}:${seconds}`
   }
 </script>
 
