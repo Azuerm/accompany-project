@@ -37,10 +37,89 @@
             <button @click="dopay">立即支付 ({{ orderList.price }}元)</button>
           </view>
         </block>
+        <!-- 进行中 -->
+        <block v-if="currentProgress == 3">
+          <block v-if="orderList.service_state == 0">
+            <view class="order-status-text">
+              <text>服务进行中</text>
+            </view>
+            <view class="order-time">
+              请保持手机畅通，稍后有服务专员联系您
+            </view>
+          </block>
+          <block v-if="orderList.service_state == 1">
+            <view class="order-status-text">
+              <text>服务进行中</text>
+            </view>
+            <view class="order-time">
+              已安排服务专员，将于预约时间进行服务
+            </view>
+          </block>
+        </block>
+        <!-- 已完成 -->
+        <block v-if="currentProgress == 4">
+          <view class="order-status-text">
+            <text>服务已完成</text>
+          </view>
+          <view class="order-time">
+            感谢您的使用
+          </view>
+        </block>
+        <!-- 已取消 -->
+          <block v-if="currentProgress == 0">
+          <view class="order-status-text">
+            <text>服务已取消</text>
+          </view>
+          <view class="order-time">
+            期待下次为您服务
+          </view>
+        </block>
       </view>
     </view>
-
-     <!-- 二维码弹出层 -->
+    <!-- 服务专员 -->
+    <view class="service-staff">
+      <view class="staff-title">
+        <view class="title-bar"></view>
+        <text>本次服务专员</text>
+      </view>
+      <view class="staff-info">
+        <view class="staff-left">
+          <image class="staff-avatar" :src="orderList?._staff?.avatar_url || defaultAvatar" mode="aspectFill" />
+          <text class="staff-name">{{ orderList?._staff?.nickname }}</text>
+        </view>
+        <view class="staff-btn" @tap="makePhone">电话联系</view>
+      </view>
+    </view>
+    <!-- 订单信息 -->
+    <view class="view-order-info">
+      <view class="info-title">
+        <view class="title-bar"></view>
+        <text>预约信息</text>
+      </view>
+      <view class="info-content">
+        <view class="info-item">
+          <text class="info-label">订单信息</text>
+          <text class="info-value">{{ orderList?.service_name }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">所在医院</text>
+          <text class="info-value">{{ orderList?.hospital_name }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">收件人</text>
+          <text class="info-value">{{ orderList?.address?.userName }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">收件地址</text>
+          <text class="info-value">{{ orderList?.address?.cityName }}{{ orderList?.address?.countyName }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">其他需求</text>
+          <text class="info-value">{{ orderList?.demand }}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 二维码弹出层 -->
     <uni-popup ref="popupQrCode" type="center" :is-mask-click="false" background-color="#fff" border-radius=" 20rpx">
       <view class="pay-box">
         <view class="pay-icon">
@@ -61,6 +140,7 @@
 <script setup>
 	import bannerBg from '@/static/resource/banner-bg.jpg'
   import cancelIcon from '@/static/resource/cancel.png'
+  import defaultAvatar from '@/static/resource/avatar.png'
   import UQRCode from 'uqrcodejs'
 	import {
 		ref,
@@ -106,7 +186,7 @@
         oid: params.oid
       },
       success: (res) => {
-        console.log('订单详情', res);
+        console.log('订单详情', res.data);
         orderList.value  = res.data
         // 待支付订单启动倒计时，key固定为detail，到期后重新请求订单详情获取最新状态
         if (res.data.trade_state == '待支付' && res.data._exp_time > 0) {
@@ -137,6 +217,12 @@
   const payment = () => {
     popupQrCode.value.close()
     uni.switchTab({ url: '/pages/order/index' })
+  }
+  // 点击拨打电话
+  const makePhone = () => {
+    uni.makePhoneCall({
+      phoneNumber: orderList.value._staff.mobile
+    })
   }
   // 页面隐藏或卸载时清除定时器
   onHide(() => {
@@ -255,5 +341,94 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+  }
+  // 服务专员
+  .service-staff {
+    width: calc(100% - 40rpx);
+    margin: 20rpx 0;
+    padding: 20rpx;
+    background-color: #fff;
+    border-radius: 10rpx;
+  }
+  .service-staff .staff-title {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 32rpx;
+  }
+  .staff-title .title-bar {
+    width: 10rpx;
+    height: 34rpx;
+    background-color: #53B286;
+    border-radius: 4rpx;
+    margin-right: 12rpx;
+  }
+  .service-staff .staff-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30rpx;
+  }
+  .staff-info .staff-left {
+    display: flex;
+    align-items: center;
+  }
+  .staff-left .staff-avatar {
+    width: 90rpx;
+    height: 90rpx;
+    border-radius: 50%;
+    margin-right: 16rpx;
+  }
+  .staff-left .staff-name {
+    font-size: 30rpx;
+    font-weight: bold;
+  }
+  .staff-info .staff-btn {
+    padding: 14rpx 34rpx;
+    background-color: #53B286;
+    color: #fff;
+    font-size: 28rpx;
+    border-radius: 20rpx;
+  }
+  // 订单信息
+  .view-order-info {
+    width: calc(100% - 40rpx);
+    margin: 20rpx 0;
+    padding: 20rpx;
+    background-color: #fff;
+    border-radius: 10rpx;
+  }
+  .view-order-info .info-title {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 32rpx;
+  }
+  .info-title .title-bar {
+    width: 10rpx;
+    height: 34rpx;
+    background-color: #53B286;
+    border-radius: 4rpx;
+    margin-right: 12rpx;
+  }
+  .view-order-info .info-content {
+    margin-top: 10rpx;
+  }
+  .info-content .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24rpx 0;
+  }
+  .info-item .info-label {
+    flex-shrink: 0;
+    margin-right: 30rpx;
+    font-size: 28rpx;
+  }
+  .info-item .info-value {
+    flex: 1;
+    text-align: right;
+    word-break: break-all;
+    font-size: 28rpx;
   }
 </style>
