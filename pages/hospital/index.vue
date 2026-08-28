@@ -152,6 +152,15 @@
       }
     })
   }
+  // 实现导航-利用微信小程序内置api
+  const openLocation = () => {
+    uni.openLocation({
+      latitude: Number(hospitalDetail.value.lat),
+      longitude: Number(hospitalDetail.value.lng),
+      name: hospitalDetail.value.name,
+      address: hospitalDetail.value.address,
+    })
+  }
   // 生成二维码：uqrcode只能画在原点，先画到单独的隐藏canvas再导出成图片
   const makeQrCode = (avatarPath) => {
     const qr = new UQRCode()
