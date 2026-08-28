@@ -83,6 +83,9 @@
         </view>
       </view>
     </uni-popup>
+    <!-- 生成分享图片用的隐藏画布（放在屏幕外，不能用display:none） -->
+    <canvas class="hide-canvas" canvas-id="qrCanvas" style="width: 150px; height: 150px;" />
+    <canvas class="hide-canvas" canvas-id="posterCanvas" style="width: 340px; height: 480px;" />
 	</view>
 </template>
 
@@ -95,6 +98,7 @@
 		onLoad,
     onShareAppMessage
 	} from '@dcloudio/uni-app'
+  import UQRCode from 'uqrcodejs'
 
 	const navHeight = ref(0)
 	const onNavHeightChange = (height) => {
@@ -133,7 +137,89 @@
   }))
   // 分享图片
   const sharePic = () => {
-
+    // 关闭分享弹窗
+    popupShare.value.close()
+    uni.showLoading({ title: '生成中' })
+    // canvas绘制需要本地图片路径，先把医院头像下载到本地
+    uni.getImageInfo({
+      src: hospitalDetail.value.avatar_url,
+      success: (imgRes) => {
+        makeQrCode(imgRes.path)
+      },
+      fail: () => {
+        uni.hideLoading()
+        uni.showToast({ title: '获取医院图片失败', icon: 'none' })
+      }
+    })
+  }
+  // 生成二维码：uqrcode只能画在原点，先画到单独的隐藏canvas再导出成图片
+  const makeQrCode = (avatarPath) => {
+    const qr = new UQRCode()
+    // 携带医院id，扫码后进入对应医院页面
+    // 注意：这是普通二维码，正式上线应由后端调用微信小程序码接口(getUnlimited)生成
+    qr.data = '/pages/hospital/index?hid=' + hospitalDetail.value.id
+    qr.size = 150
+    qr.make()
+    const qrCtx = uni.createCanvasContext('qrCanvas')
+    qr.canvasContext = qrCtx
+    // drawCanvas返回promise，内部已延时等待绘制完成
+    qr.drawCanvas().then(() => {
+      uni.canvasToTempFilePath({
+        canvasId: 'qrCanvas',
+        success: (res) => {
+          drawPoster(avatarPath, res.tempFilePath)
+        },
+        fail: () => {
+          uni.hideLoading()
+          uni.showToast({ title: '生成失败', icon: 'none' })
+        }
+      })
+    })
+  }
+  // 绘制海报：头像 + 医院信息 + 二维码
+  const drawPoster = (avatarPath, qrPath) => {
+    const hospital = hospitalDetail.value
+    const ctx = uni.createCanvasContext('posterCanvas')
+    // 白色背景
+    ctx.setFillStyle('#ffffff')
+    ctx.fillRect(0, 0, 340, 480)
+    // 医院头像
+    ctx.drawImage(avatarPath, 20, 20, 90, 90)
+    // 医院名称（超长截断）
+    const name = hospital.name && hospital.name.length > 9 ? hospital.name.slice(0, 9) + '...' : hospital.name
+    ctx.setFillStyle('#333333')
+    ctx.font = 'bold 18px sans-serif'
+    ctx.fillText(name, 125, 55)
+    // 医院等级、标签
+    ctx.setFillStyle('#53B286')
+    ctx.font = 'normal 13px sans-serif'
+    ctx.fillText((hospital.rank || '') + '  ' + (hospital.label || ''), 125, 85)
+    // 医院地址（超长截断）
+    const address = hospital.address && hospital.address.length > 16 ? hospital.address.slice(0, 16) + '...' : hospital.address
+    ctx.setFillStyle('#999999')
+    ctx.font = 'normal 12px sans-serif'
+    ctx.fillText(address, 20, 145)
+    // 二维码
+    ctx.drawImage(qrPath, 100, 240, 140, 140)
+    // 提示文字
+    ctx.fillText('长按识别小程序码进入医院页面', 20, 440)
+    // 等待绘制完成再导出（draw回调后仍需延时，否则导出异常）
+    ctx.draw(false, () => {
+      setTimeout(() => {
+        uni.canvasToTempFilePath({
+          canvasId: 'posterCanvas',
+          success: (res) => {
+            uni.hideLoading()
+            // 预览海报，用户可长按保存到相册或发送给朋友
+            uni.previewImage({ urls: [res.tempFilePath] })
+          },
+          fail: () => {
+            uni.hideLoading()
+            uni.showToast({ title: '生成失败', icon: 'none' })
+          }
+        })
+      }, 150)
+    })
   }
 </script>
 
@@ -390,5 +476,11 @@
   .share-item .share-icon {
     width: 80rpx;
     height: 80rpx;
+  }
+  // 隐藏画布：放到屏幕外
+  .hide-canvas {
+    position: fixed;
+    left: 9999rpx;
+    top: 0;
   }
 </style>
