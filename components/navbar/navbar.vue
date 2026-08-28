@@ -151,7 +151,7 @@
 		} else {
 			// 跳转到首页 tabbar
 			uni.switchTab({
-				url: 'pages/index/index'
+				url: '/pages/index/index'
 			})
 		}
 	}
