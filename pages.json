@@ -33,7 +33,8 @@
 		{
 			"path": "pages/hospital/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "",
+        "navigationStyle": "custom"
 			}
 		},
 		{

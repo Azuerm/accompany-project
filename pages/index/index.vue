@@ -273,10 +273,12 @@
     font-size: 28rpx;
     color: #82BDA3;
     margin-right: 10rpx;
+    font-weight: bold;
   }
   .hosp-list .hosp-item .hosp-details .hosp-label {
     font-size: 28rpx;
     color: #94CED1;
+    font-weight: bold;
   }
    .hosp-list .hosp-item .hosp-details .hosp-intro {
     font-size: 28rpx;
