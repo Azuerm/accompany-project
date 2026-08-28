@@ -17,7 +17,7 @@
 									<text class="hosp-rank">{{ hospitalDetail.rank }}</text>
 									<text class="hosp-label">{{ hospitalDetail.label }}</text>
 								</view>
-								<view class="hosp-share">
+								<view class="hosp-share" @click="goShare">
 									转发
 									<image src="@/static/resource/service_right.png" />
 								</view>
@@ -57,7 +57,32 @@
 				</view>
 			</view>
 		</view>
-
+    <!-- 分享弹出层 -->
+    <uni-popup ref="popupShare" type="bottom" :is-mask-click="false" background-color="#EEF1EE" border-radius=" 20rpx">
+      <view class="share-box">
+        <view class="share-header">
+          <text>转发分享</text>
+          <image class="share-close" src="@/static/resource/cancel.png" @tap="popupShare.close()" />
+        </view>
+        <view class="share-option">
+          <view class="share-item">
+            <button open-type="share">
+              <image
+                src="@/static/resource/share-friend.png"
+                class="share-icon"
+              />
+            </button>
+            <text>发给微信好友</text>
+          </view>
+          <view class="share-item" @click="sharePic">
+            <image
+              src="@/static/resource/share-pic.png"
+            />
+            <text>生成分享图片</text>
+          </view>
+        </view>
+      </view>
+    </uni-popup>
 	</view>
 </template>
 
@@ -67,7 +92,8 @@
 	} from 'vue'
 
 	import {
-		onLoad
+		onLoad,
+    onShareAppMessage
 	} from '@dcloudio/uni-app'
 
 	const navHeight = ref(0)
@@ -79,6 +105,8 @@
 	const hospitalDetail = ref({})
 	// 医院服务列表
 	const servicesList = ref([])
+  const popupShare = ref()
+
 	onLoad((params) => {
 		app.globalData.utils.request({
 			url: '/Hospital/index',
@@ -93,6 +121,20 @@
 			}
 		})
 	})
+  // 点击分享
+  const goShare = () => {
+    popupShare.value.open()
+  }
+  // 设置分享该页面的信息
+  onShareAppMessage(() => ({
+    title: hospitalDetail.value.name,
+    path: '/pages/hospital/index?hid=' + hospitalDetail.value.id,
+    imageUrl: hospitalDetail.value.avatar_url
+  }))
+  // 分享图片
+  const sharePic = () => {
+
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -294,4 +336,59 @@
 		font-size: 26rpx;
     font-weight: bold;
 	}
+
+  .share-box {
+    padding: 30rpx;
+  }
+  .share-box .share-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .share-header text {
+    font-size: 32rpx;
+    font-weight: bold;
+  }
+  .share-header image {
+    width: 30rpx;
+    height: 30rpx;
+    vertical-align: middle;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .share-option {
+    display: flex;
+    margin: 50rpx 0;
+  }
+  .share-option .share-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .share-item button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 120rpx;
+    height: 120rpx;
+  }
+  .share-item text {
+    margin-top: 10rpx;
+    font-size: 24rpx;
+    margin-top: 20rpx;
+  }
+  .share-item image {
+    background: #fff;
+    width: 120rpx;
+    height: 120rpx;
+  }
+  .share-item .share-icon {
+    width: 80rpx;
+    height: 80rpx;
+  }
 </style>
