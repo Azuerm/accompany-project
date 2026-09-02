@@ -2,7 +2,8 @@ class Utils {
   // class的作用是封装一些常用的函数，方便在其他地方调用
   constructor() {
     // constructor的作用是：初始化类的属性，一般用于设置默认值
-    this.baseUrl = 'http://159.75.169.224:7300/pz' // 基础url
+    // this.baseUrl = 'http://159.75.169.224:7300/pz' // 基础url
+    this.baseUrl = 'https://code.itndedu.com/pz' // 基础url
   }
   // 获取用户信息
   getUserInfo() {
