@@ -101,6 +101,7 @@
   const { countdownMap, startCountdown, stopCountdown, formatCountdown } = useCountdown()
   onShow(() => {
     // 将onLoad改为onShow，是因为：order在tarbar中，在tarbar中onLoad只会执行一次，所以需要onShow
+    currentItem.value = app.globalData.orderType
     // 调用订单列表
     loadList()
   })

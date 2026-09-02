@@ -12,7 +12,8 @@
 		},
     globalData: {
       // 全局变量，用于在其他页面中调用
-      utils: Utils
+      utils: Utils,
+      orderType: 0 // 订单类型
     }
 	}
 </script>
