@@ -44,16 +44,18 @@
 			<view class="service-box">
 				<view class="service-title">在线预约您需要的服务</view>
 				<view class="service-item" v-for="item in servicesList" :key="item.id">
-					<image class="service-logo" :src="item.logo_image_url" mode="aspectFill" />
-					<view class="service-info">
-						<view class="service-name">{{ item.name }}</view>
-						<view class="service-intro">{{ item.intro }}</view>
-						<view class="service-price">
-							<text class="price-num">{{ item.price }}</text>
-							<text class="price-unit">元/次</text>
-						</view>
-					</view>
-					<view class="service-btn">预约</view>
+					<block v-if="item.use_switch == 1">
+            <image class="service-logo" :src="item.logo_image_url" mode="aspectFill" />
+              <view class="service-info">
+                <view class="service-name">{{ item.name }}</view>
+                <view class="service-intro">{{ item.intro }}</view>
+                <view class="service-price">
+                  <text class="price-num">{{ item.price }}</text>
+                  <text class="price-unit">元/次</text>
+                </view>
+              </view>
+              <view class="service-btn" @tap="toService(item.id)">预约</view>
+          </block>
 				</view>
 			</view>
 		</view>
@@ -121,7 +123,7 @@
 				hospitalDetail.value = res.data.hospital
 				servicesList.value = res.data.services
 				console.log('医院详情', hospitalDetail.value);
-				console.log('服务详情', hospitalDetail.value);
+				console.log('服务详情', servicesList.value);
 			}
 		})
 	})
@@ -228,6 +230,12 @@
           }
         })
       }, 150)
+    })
+  }
+  // 跳转到服务预约页面
+  const toService = (svid) => {
+    uni.navigateTo({
+      url: `/pages/service/index?hid=${hospitalDetail.value.id}&svid=${svid}`
     })
   }
 </script>
